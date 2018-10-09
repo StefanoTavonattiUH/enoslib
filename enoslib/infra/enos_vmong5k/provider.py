@@ -151,7 +151,7 @@ def start_virtualmachines(provider_conf, g5k_init, vmong5k_roles):
     pm_inventory_path = os.path.join(os.getcwd(), "pm_hosts")
     generate_inventory(*g5k_init, pm_inventory_path)
     # deploy virtual machines with ansible playbook
-    run_ansible([PLAYBOOK_PATH], pm_inventory_path, extra_vars)
+    run_ansible([PLAYBOOK_PATH], pm_inventory_path, extra_vars=extra_vars)
 
 
 class VirtualMachine(Host):
