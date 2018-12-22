@@ -18,6 +18,27 @@ python3.6:
   script:
   - pip install tox
   - tox -e py36 pep8
+
+python3.6_sonar:
+  image: python:3.6-stretch
+  stage: test
+  tags:
+  - large
+    #only:
+    #refs:
+    #- master
+  script:
+  - pip install tox
+  # allow failures to publish reports
+  - tox -e py36 pep8 || true
+  - apt update
+  - apt install -y wget unzip openjdk-8-jre
+  - pip install pylint
+  - wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.2.0.1227-linux.zip
+  - unzip sonar-scanner-cli-3.2.0.1227-linux.zip
+  - wget --no-check-certificate https://sonarqube.bordeaux.inria.fr/static/digicertca.crt
+  - keytool -import -alias inria -storepass "changeit" -keystore $(pwd)/sonar-scanner-3.2.0.1227-linux/jre/lib/security/cacerts -file digicertca.crt
+  - sonar-scanner-3.2.0.1227-linux/bin/sonar-scanner -Dsonar.login=$SONAR_LOGIN
   artifacts:
     paths:
     - ./utest.xml
@@ -52,22 +73,6 @@ run_ansible:
   - cd enoslib/tests/functionnal
   - python test_static_run_ansible.py
   - cat hosts
-
-sonar:
-  image: debian
-  stage: functionnal
-  dependencies:
- - python3.6
-  tags:
-  - large
-  script:
-  - apt update
-  - apt install -y wget unzip
-  - wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.2.0.1227-linux.zip
-  - unzip sonar-scanner-cli-3.2.0.1227-linux.zip
-  - wget --no-check-certificate https://sonarqube.bordeaux.inria.fr/static/digicertca.crt
-  - keytool -import -alias inria -storepass "changeit" -keystore $(pwd)/sonar-scanner-3.2.0.1227-linux/jre/lib/security/cacerts -file digicertca.crt
-  - sonar-scanner-3.2.0.1227-linux/bin/sonar-scanner -Dsonar.login=$SONAR_LOGIN
 
 #### Entering th release zone
 package:
