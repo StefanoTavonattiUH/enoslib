@@ -122,7 +122,7 @@ def _distribute(machines, g5k_roles, g5k_subnet):
                 static_hashes[static_hash],
                 idx)
             pm = next(pms_it)
-            vm = VirtualMachine(name, next(euis), machine.flavour, pm)
+            vm = VirtualMachine(name, next(euis), machine.flavour_desc, pm)
 
             for role in machine.roles:
                 vmong5k_roles[role].append(vm)
