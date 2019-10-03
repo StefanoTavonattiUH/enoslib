@@ -134,6 +134,20 @@ service_monitoring:
   - cd enoslib/tests/functionnal
   - python3 test_monitoring_service.py
 
+service_skydive:
+  image: debian:10
+  stage: functionnal
+  tags: [qlf-ci.inria.fr]
+  script:
+  - env
+  - ip a
+  - apt update 
+  - apt install -y python3 python3-pip
+  - update-alternatives --install /usr/bin/python python /usr/bin/python3 1
+  - pip3 install -e .
+  - cd enoslib/tests/functionnal
+  - python3 test_monitoring_skydive.py
+
 #### Entering th release zone
 package:
   image: python:3.7

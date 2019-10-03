@@ -1,4 +1,4 @@
-from enoslib.api import play_on, run_ansible
+from enoslib.api import play_on, run_ansible, python3
 import os
 
 from ..service import Service
@@ -91,13 +91,7 @@ class Skydive(Service):
 
     def deploy(self):
         # Some requirements
-        with play_on(pattern_hosts="all", roles=self.roles) as p:
-            p.apt(
-                display_name="[Preinstall] Installing python-pip",
-                name=["python3", "python-pip", "python3-pip"],
-                state="present",
-                update_cache=True,
-            )
+        with play_on(pattern_hosts="all", roles=self.roles, priors=[python3]) as p:
             p.pip(display_name="[Preinstall] Installing pyyaml", name="pyyaml")
         _playbook = os.path.join(SERVICE_PATH, "skydive", "skydive.yml")
         run_ansible([_playbook], roles=self.roles, extra_vars=self.extra_vars)
