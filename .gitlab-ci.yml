@@ -146,7 +146,7 @@ service_skydive:
   - update-alternatives --install /usr/bin/python python /usr/bin/python3 1
   - pip3 install -e .
   - cd enoslib/tests/functionnal
-  - python3 test_monitoring_skydive.py
+  - python3 test_skydive_service.py
 
 #### Entering th release zone
 package:
