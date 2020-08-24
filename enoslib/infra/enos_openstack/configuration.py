@@ -1,4 +1,4 @@
-from ..configuration import BaseConfiguration
+from ..configuration import BaseConfiguration, BaseMachineConfiguration, BaseNetworkConfiguration
 
 from .schema import SCHEMA
 from .constants import (
@@ -66,7 +66,7 @@ class Configuration(BaseConfiguration):
         return d
 
 
-class MachineConfiguration:
+class MachineConfiguration(BaseMachineConfiguration):
     def __init__(self, *, roles=None, flavour=None, number=None):
         self.roles = roles
         self.flavour = flavour

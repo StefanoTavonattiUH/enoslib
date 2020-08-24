@@ -1,4 +1,4 @@
-from ..configuration import BaseConfiguration
+from ..configuration import BaseConfiguration, BaseMachineConfiguration, BaseNetworkConfiguration
 from .constants import (
     DEFAULT_BACKEND,
     DEFAULT_BOX,
@@ -62,7 +62,7 @@ class Configuration(BaseConfiguration):
         return d
 
 
-class MachineConfiguration:
+class MachineConfiguration(BaseMachineConfiguration):
     def __init__(
         self, *, roles=None, flavour=None, flavour_desc=None, number=1, name_prefix=""
     ):
@@ -114,7 +114,7 @@ class MachineConfiguration:
         return d
 
 
-class NetworkConfiguration:
+class NetworkConfiguration(BaseNetworkConfiguration):
     def __init__(self, *, roles=None, cidr=""):
         self.roles = roles
         self.cidr = cidr

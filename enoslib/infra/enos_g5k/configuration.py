@@ -1,4 +1,6 @@
-from ..configuration import BaseConfiguration
+import copy
+
+from ..configuration import BaseConfiguration, BaseMachineConfiguration, BaseNetworkConfiguration
 from .constants import (
     DEFAULT_ENV_NAME,
     DEFAULT_JOB_NAME,
@@ -75,7 +77,7 @@ class Configuration(BaseConfiguration):
         return d
 
 
-class MachineConfiguration:
+class MachineConfiguration(BaseMachineConfiguration):
     def __init__(
         self,
         *,
@@ -140,8 +142,14 @@ class MachineConfiguration:
         )
         return d
 
+    def _filter_args_repr(self, kv):
+        _kv = copy.deepcopy(kv)
+        _kv["primary_network"] = self.primary_network.id if self.primary_network is not None else None
+        _kv["secondary_networks"] = [s.id for s in self.secondary_networks]
+        return _kv
 
-class NetworkConfiguration:
+
+class NetworkConfiguration(BaseNetworkConfiguration):
     def __init__(self, *, id=None, roles=None, type=None, site=None):
         # NOTE(msimonin): mandatory keys will be captured by the finalize
         # function of the configuration.

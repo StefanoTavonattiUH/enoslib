@@ -1,7 +1,7 @@
 import uuid
 
 from enoslib.host import Host
-from ..configuration import BaseConfiguration
+from ..configuration import BaseConfiguration, BaseMachineConfiguration
 from .constants import (
     DEFAULT_FLAVOUR,
     DEFAULT_IMAGE,
@@ -82,7 +82,7 @@ class Configuration(BaseConfiguration):
         return d
 
 
-class MachineConfiguration:
+class MachineConfiguration(BaseMachineConfiguration):
     def __init__(
         self,
         *,

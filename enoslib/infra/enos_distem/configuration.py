@@ -1,6 +1,6 @@
 import uuid
 
-from ..configuration import BaseConfiguration
+from ..configuration import BaseConfiguration, BaseMachineConfiguration
 from .constants import (
     DEFAULT_FLAVOUR,
     DEFAULT_JOB_NAME,
@@ -72,7 +72,7 @@ class Configuration(BaseConfiguration):
         return d
 
 
-class MachineConfiguration:
+class MachineConfiguration(BaseMachineConfiguration):
     def __init__(
         self,
         *,
