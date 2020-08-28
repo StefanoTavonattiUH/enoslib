@@ -6,6 +6,7 @@ from netaddr import IPNetwork
 
 import vagrant
 
+from enoslib.objects import Network, Inventory, InMemHostInventory, InMemNetworkInventory
 from enoslib.host import Host
 from enoslib.infra.provider import Provider
 
@@ -42,7 +43,6 @@ class Enos_vagrant(Provider):
             )
 
         vagrant_machines = []
-        vagrant_roles = {}
         global_prefix = self.provider_conf.name_prefix or DEFAULT_NAME_PREFIX
         for counter, machine in enumerate(machines):
             prefix = (
@@ -57,13 +57,9 @@ class Enos_vagrant(Provider):
                     "cpu": machine.flavour_desc["core"],
                     "mem": machine.flavour_desc["mem"],
                     "ips": [n["netpool"].pop() for n in _networks],
+                    "roles": machine.roles
                 }
                 vagrant_machines.append(vagrant_machine)
-                # Assign the machines to the right roles
-                for role in machine.roles:
-                    vagrant_roles.setdefault(role, []).append(vagrant_machine)
-
-        logger.debug(vagrant_roles)
 
         loader = FileSystemLoader(searchpath=TEMPLATE_DIR)
         env = Environment(loader=loader, autoescape=True)
@@ -88,37 +84,40 @@ class Enos_vagrant(Provider):
 
         v.up()
         v.provision()
+        # new API
+        # inventory = Inventory()
+        inventory = Inventory(InMemHostInventory(), InMemNetworkInventory())
         roles = {}
-        for role, machines in vagrant_roles.items():
-            for machine in machines:
-                keyfile = v.keyfile(vm_name=machine["name"])
-                port = v.port(vm_name=machine["name"])
-                address = v.hostname(vm_name=machine["name"])
-                roles.setdefault(role, []).append(
-                    Host(
-                        address,
-                        alias=machine["name"],
-                        user=self.provider_conf.user,
-                        port=port,
-                        keyfile=keyfile,
-                    )
+        for machine in vagrant_machines:
+            keyfile = v.keyfile(vm_name=machine["name"])
+            port = v.port(vm_name=machine["name"])
+            address = v.hostname(vm_name=machine["name"])
+            h = Host(
+                    address,
+                    alias=machine["name"],
+                    user=self.provider_conf.user,
+                    port=port,
+                    keyfile=keyfile,
                 )
+            # new API
+            inventory.add_host(machine["roles"], h)
 
-        networks = [
-            {
+        for n in _networks:
+            _n = {
                 "cidr": str(n["cidr"]),
                 "start": str(n["netpool"][0]),
                 "end": str(n["netpool"][-1]),
                 "dns": "8.8.8.8",
                 "gateway": str(n["gateway"]),
-                "roles": n["roles"],
             }
-            for n in _networks
-        ]
+            inventory.add_network(n["roles"], Network(**_n))
+        # New API (same as machines)
+        # inventory.add_network(role, Network())
         logger.debug(roles)
         logger.debug(networks)
-
-        return (roles, networks)
+        # new API
+        # return inventory
+        return inventory
 
     def destroy(self):
         """Destroy all vagrant box involved in the deployment."""

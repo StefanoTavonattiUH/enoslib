@@ -33,11 +33,20 @@ provider = Enos_vagrant(conf)
 # The code below is intended to be provider agnostic
 
 # Start the resources
+# new API
+# inventory = provider.init()
 roles, networks = provider.init()
 
 # Add some specific knowledge to the returned roles (e.g on the server the ip
 # for mynetwork is 192.168.42.254)
 roles = discover_networks(roles, networks)
+# new API ?
+# inventory.discover_networks()
+
+# new API ?
+# with inventory.actions() as p:
+#   p....
+
 
 # Experimentation logic starts here
 with play_on(roles=roles) as p:

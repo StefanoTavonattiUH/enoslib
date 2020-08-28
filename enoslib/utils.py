@@ -33,3 +33,30 @@ def _check_tmpdir(tmpdir):
             raise EnosFilePathError("%s is not a directory" % tmpdir)
         else:
             pass
+
+class ReprMixin:
+    def _filter_args_repr(self, kv):
+        return kv
+
+    def _top_level_kv(self):
+        kv = dict([[k, getattr(self, k)] for k in self.__dict__.keys() if not k.startswith("_")])
+        # deal with str class e.g
+        kv = self._filter_args_repr(kv)
+        return kv
+
+    def __repr__(self):
+        table = self._build_table_attrs()
+        return table.get_string()
+
+    def _repr_html_(self):
+        table = self._build_table_attrs()
+        return table.get_html_string()
+
+    def _build_table_attrs(self):
+        from prettytable import PrettyTable
+
+        # first general settings
+        table = PrettyTable(["Key", "Value"])
+        for k, v in self._top_level_kv().items():
+            table.add_row([k, v])
+        return table

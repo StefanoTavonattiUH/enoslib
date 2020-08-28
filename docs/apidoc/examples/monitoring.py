@@ -17,11 +17,11 @@ network = NetworkConfiguration(id="n1",
                                site="rennes")
 conf.add_network_conf(network)\
     .add_machine(roles=["control"],
-                 cluster="paravance",
+                 cluster="parapluie",
                  nodes=1,
                  primary_network=network)\
     .add_machine(roles=["compute"],
-                 cluster="paravance",
+                 cluster="parapluie",
                  nodes=1,
                  primary_network=network)\
     .finalize()

@@ -33,7 +33,10 @@ conf = (
 )
 
 provider = G5k(conf)
+# new API
+# inventory = provider.init()
 roles, networks = provider.init()
+
 
 # destroy the reservation
 provider.destroy()

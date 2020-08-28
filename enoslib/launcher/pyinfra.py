@@ -1,0 +1,3 @@
+class PyInfra(Launcher):
+    pass
+ 
